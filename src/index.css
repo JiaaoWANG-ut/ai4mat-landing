@@ -1,0 +1,287 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Geist Pixel';
+  src: url('../node_modules/geist/dist/fonts/geist-pixel/GeistPixel-Line.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 193 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 6%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 6%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 263 70% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 10%;
+    --input: 0 0% 10%;
+    --ring: 193 100% 50%;
+    --radius: 0px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: #000;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+  50% { box-shadow: 0 0 20px 4px rgba(0, 212, 255, 0.3); }
+}
+
+@keyframes blur-text {
+  0% { filter: blur(0px); }
+  100% { filter: blur(4px); }
+}
+
+/* ============================================ */
+/* HERO CANVAS — Mobile visibility              */
+/* ============================================ */
+.hero-canvas-mobile {
+  display: none;
+}
+
+.hero-canvas-desktop {
+  display: block;
+}
+
+/* ============================================ */
+/* CARD GRID — Default borders                  */
+/* ============================================ */
+.cards-grid .card-item {
+  border-right: 1px solid #000;
+}
+.cards-grid .card-item:last-child {
+  border-right: none;
+}
+
+/* ============================================ */
+/* MEDIA QUERIES — Tablet (max-width: 768px)    */
+/* ============================================ */
+@media (max-width: 768px) {
+  /* Hero */
+  .hero-section {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+  }
+
+  .hero-left {
+    width: 100% !important;
+    min-width: auto !important;
+    padding: 100px 24px 60px !important;
+  }
+
+  .hero-canvas-desktop {
+    display: none !important;
+  }
+
+  .hero-canvas-mobile {
+    display: block !important;
+  }
+
+  .hero-title {
+    font-size: clamp(32px, 9vw, 44px) !important;
+    line-height: 1.0 !important;
+  }
+
+  .hero-ctas-mob {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    width: 100% !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .hero-notes-mob {
+    margin-top: 40px !important;
+    gap: 16px !important;
+  }
+
+  .hero-trust-mob {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    margin-top: 32px !important;
+  }
+
+  /* Section padding — light */
+  .section-light {
+    padding: 80px 24px !important;
+  }
+
+  /* Section padding — dark */
+  .section-dark {
+    padding: 80px 24px !important;
+  }
+
+  /* Section labels */
+  .section-label {
+    font-size: 14px !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* Section H2 */
+  .section-h2 {
+    font-size: clamp(22px, 6vw, 28px) !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* Solution grid */
+  .solution-grid {
+    grid-template-columns: 1fr !important;
+    gap: 48px !important;
+  }
+
+  /* Card grid — stack with bottom borders */
+  .cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .cards-grid .card-item {
+    border-right: none !important;
+    border-bottom: 1px solid #000;
+    padding: 32px 20px !important;
+  }
+
+  .cards-grid .card-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Applications & Packages grids */
+  .apps-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .apps-grid .app-card {
+    border-right: none !important;
+    border-bottom: 1px solid #000;
+    padding: 32px 20px !important;
+  }
+
+  .apps-grid .app-card:last-child {
+    border-bottom: none;
+  }
+
+  .pkgs-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pkgs-grid .pkg-card {
+    padding: 36px 24px !important;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pricing-grid .pricing-card {
+    padding: 36px 24px !important;
+  }
+
+  /* Differentiation */
+  .diff-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+
+  /* Workflow */
+  .wf-step {
+    gap: 20px !important;
+    margin-bottom: 48px !important;
+  }
+
+  .wf-step .wf-text {
+    padding-top: 4px !important;
+  }
+
+  /* Pipeline */
+  .pipeline-wrap {
+    gap: 6px !important;
+  }
+
+  /* Navbar */
+  .nav-desktop {
+    display: none !important;
+  }
+
+  /* Form row */
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Sticky bar padding compensation */
+  .sticky-bar-active {
+    padding-bottom: 64px !important;
+  }
+}
+
+/* ============================================ */
+/* MEDIA QUERIES — Phone (max-width: 480px)     */
+/* ============================================ */
+@media (max-width: 480px) {
+  .hero-left {
+    padding: 90px 20px 50px !important;
+  }
+
+  .hero-title {
+    font-size: clamp(26px, 10vw, 32px) !important;
+  }
+
+  .hero-pricing {
+    padding: 12px 14px !important;
+  }
+
+  .hero-pricing span:first-child {
+    font-size: 22px !important;
+  }
+
+  .section-light,
+  .section-dark {
+    padding: 64px 20px !important;
+  }
+}
+
+/* ============================================ */
+/* DESKTOP NAV HIDE mobile-only                 */
+/* ============================================ */
+@media (min-width: 769px) {
+  .nav-mobile-btn {
+    display: none !important;
+  }
+}
