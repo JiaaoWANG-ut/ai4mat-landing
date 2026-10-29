@@ -49,6 +49,11 @@ Missing authorization fails the job before deployment. After deployment, the job
 requires the actual apex to serve the new release, ten live scenes, a healthy
 application, and the enhanced workspace; a Git push alone cannot pass this check.
 
+After configuring the repository publishing secret, an operator with the existing
+SSH repository permission can trigger a deliberate release without needing a
+GitHub administration token. Push a unique `ai4mat-apex-*` tag pointing at the
+tested commit, or rerun the workflow from GitHub Actions. Release runs are serialized.
+
 ## Original client template
 
 An experimental lunar observatory website template with a split hero layout, flowing interactive ASCII moon field, manifesto video section, facilities directory with detail pages, live observation feed, archive carousel, and monochrome footer.
