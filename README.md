@@ -1,4 +1,38 @@
-# 6 Ascii Moon Frontend Template
+# AI4MAT apex delivery
+
+The production entry point is [public/_worker.js](./public/_worker.js), a
+Cloudflare Pages advanced-mode worker. It forwards the apex site's requests to
+the shared AI4MAT application at `https://upload.ai4mat.ai`, including the live
+interactive homepage, workspace, uploads, downloads, and authenticated history.
+The original React template below is retained as source history, not as a second
+copy of the production product.
+
+The worker uses one fixed upstream, streams request/response bodies, preserves
+cookies and download headers, and does not cache private responses or retry
+unconfirmed uploads. `X-AI4MAT-Frontend-Host: ai4mat.ai` tells the application to
+construct its URLs for the public apex host; the backend allows only that exact
+owned hostname and does not use it for authentication.
+
+Use Node 22 or a supported current LTS release:
+
+```sh
+npm ci
+npm run test:edge
+npm run build
+```
+
+The lockfile uses the public npm registry while preserving dependency versions and
+integrity hashes; the original private mirror is not reachable from public builds.
+
+Vite copies the worker from `public/` to `dist/_worker.js`. Deploy **dist/** to
+the existing Cloudflare Pages project. Keep `upload.ai4mat.ai` routed directly to
+the application's dedicated tunnel, not to this worker, to avoid a routing loop.
+
+Verify the actual root page and `/workspace` after deployment. A successful
+delivery response carries `X-AI4MAT-Release: shared-workspace-v1`; changing this
+repository alone is not proof that the hosting project's publishing hook ran.
+
+## Original client template
 
 An experimental lunar observatory website template with a split hero layout, flowing interactive ASCII moon field, manifesto video section, facilities directory with detail pages, live observation feed, archive carousel, and monochrome footer.
 
