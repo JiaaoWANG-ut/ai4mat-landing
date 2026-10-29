@@ -32,6 +32,23 @@ Verify the actual root page and `/workspace` after deployment. A successful
 delivery response carries `X-AI4MAT-Release: shared-workspace-v1`; changing this
 repository alone is not proof that the hosting project's publishing hook ran.
 
+### Authorized production workflow
+
+[Publish AI4MAT apex](./.github/workflows/publish-apex.yml) can publish the same
+entry point as a dedicated Worker using [wrangler.apex.json](./wrangler.apex.json).
+It manages only the `ai4mat.ai/*` route, not unrelated domains or the application's
+direct `upload.ai4mat.ai` origin.
+
+The workflow uses only this repository's standard `CLOUDFLARE_API_TOKEN` publishing
+secret (or its `CF_API_TOKEN` alias). It does not print credentials, read unrelated
+secrets, or import credentials from another project. The token must authorize
+Workers publishing and the apex zone's Workers route. The account identifier in
+the configuration is non-secret and selects the existing site account.
+
+Missing authorization fails the job before deployment. After deployment, the job
+requires the actual apex to serve the new release, ten live scenes, a healthy
+application, and the enhanced workspace; a Git push alone cannot pass this check.
+
 ## Original client template
 
 An experimental lunar observatory website template with a split hero layout, flowing interactive ASCII moon field, manifesto video section, facilities directory with detail pages, live observation feed, archive carousel, and monochrome footer.

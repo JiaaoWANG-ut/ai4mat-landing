@@ -1,0 +1,13 @@
+{
+  "name": "ai4mat-apex-delivery",
+  "account_id": "b268e1687b1c86f2fecf822b5b592061",
+  "main": "public/_worker.js",
+  "compatibility_date": "2026-10-29",
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "ai4mat.ai/*",
+      "zone_name": "ai4mat.ai"
+    }
+  ]
+}

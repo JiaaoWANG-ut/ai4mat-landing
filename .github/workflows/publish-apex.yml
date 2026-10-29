@@ -1,0 +1,54 @@
+name: Publish AI4MAT apex
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - public/_worker.js
+      - wrangler.apex.json
+      - scripts/verify-apex.mjs
+      - tests/edge-proxy.test.mjs
+      - .github/workflows/publish-apex.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai4mat-apex-production
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check existing publishing authorization
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CF_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::The repository has no configured Cloudflare publishing token."
+            printf '%s\n' 'Publishing did not run: configure the existing site publishing authorization as CLOUDFLARE_API_TOKEN. No credentials were printed or transferred from another project.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+
+      - name: Verify the fixed-origin entry point
+        run: node --test tests/edge-proxy.test.mjs
+
+      - name: Install the publishing client without credentials
+        run: npm install --prefix "$RUNNER_TEMP/ai4mat-publisher" --registry=https://registry.npmjs.org --no-audit --no-fund wrangler@4
+
+      - name: Publish only the apex worker and route
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CF_API_TOKEN }}
+        run: '"$RUNNER_TEMP/ai4mat-publisher/node_modules/.bin/wrangler" deploy --config wrangler.apex.json'
+
+      - name: Verify the actual public domain
+        run: node scripts/verify-apex.mjs

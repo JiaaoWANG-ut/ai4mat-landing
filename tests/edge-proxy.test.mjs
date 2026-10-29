@@ -1,6 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import worker from "../public/_worker.js";
+import { verifyApex } from "../scripts/verify-apex.mjs";
 
 test("forwards only to the fixed application origin and preserves the path", async (t) => {
   let forwarded;
@@ -105,4 +107,42 @@ test("prevents a misconfigured origin from recursively calling itself", async (t
   const result = await worker.fetch(new Request("https://upload.ai4mat.ai/"));
   assert.equal(result.status, 508);
   assert.equal(upstream.mock.callCount(), 0);
+});
+
+test("production routing is limited to the requested apex", async () => {
+  const config = JSON.parse(await readFile(new URL("../wrangler.apex.json", import.meta.url), "utf8"));
+  assert.equal(config.main, "public/_worker.js");
+  assert.equal(config.workers_dev, false);
+  assert.deepEqual(config.routes, [{ pattern: "ai4mat.ai/*", zone_name: "ai4mat.ai" }]);
+});
+
+test("publication verification rejects a legacy page even if it returns HTTP 200", async () => {
+  await assert.rejects(
+    verifyApex(async () => new Response("<h1>Old site</h1>")),
+    /not serving the published entry point/,
+  );
+});
+
+test("publication verification checks the actual homepage, health, and workspace", async () => {
+  const visited = [];
+  await verifyApex(async (url) => {
+    visited.push(url);
+    if (url === "https://ai4mat.ai") {
+      return new Response(`下一次突破${"<canvas></canvas>".repeat(10)}`, {
+        headers: { "X-AI4MAT-Release": "shared-workspace-v1" },
+      });
+    }
+    if (url.endsWith("/_stcore/health")) return Response.json({ status: "ok" });
+    return new Response('<form data-enhanced="true"></form>');
+  });
+  assert.deepEqual(visited, ["https://ai4mat.ai", "https://ai4mat.ai/_stcore/health", "https://ai4mat.ai/workspace"]);
+});
+
+test("publication verification will not accept static homepage images", async () => {
+  await assert.rejects(
+    verifyApex(async () => new Response(`下一次突破${"<canvas></canvas>".repeat(10)}<img src="/old.png">`, {
+      headers: { "X-AI4MAT-Release": "shared-workspace-v1" },
+    })),
+    /does not contain the verified interactive homepage/,
+  );
 });
